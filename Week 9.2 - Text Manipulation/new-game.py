@@ -16,19 +16,21 @@ RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 running = True
 pygame.mixer.music.load("music3.mp3")
-pygame.mixer.music.play(-1)  # Play music in a loop
-pygame.mixer.music.set_volume(0.5)  # Set music volume (0.0 to 1.0)
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.5)
 
 #event handling/layar
 status = "menu"
 
 #settings
-player_x = 400
-player_y = 300
+head_x, head_y = 400.0, 300.0
+trail = [(400.0, 300.0)]
 velocity = 0.05
+spacing = 15
 score = 0
-fruit_x = random.randint(50, WIDTH-10)
-fruit_y = random.randint(50, HEIGHT-10)
+snake_length = 1
+fruit_x = random.randint(50, WIDTH-50)
+fruit_y = random.randint(50, HEIGHT-50)
 
 #game loop
 while running: 
@@ -52,32 +54,51 @@ while running:
         rect_score = text_score.get_rect(center=(400,50))
         screen.blit(text_score, rect_score)
 
-        #renderObject       
-        text_player = font.render("o", True, WHITE)
-        rect_player = text_player.get_rect(center=(player_x,player_y))
-        screen.blit(text_player, rect_player)
+        #movement
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            head_x -= velocity
+        if keys[pygame.K_RIGHT]:
+            head_x += velocity
+        if keys[pygame.K_UP]:
+            head_y -= velocity
+        if keys[pygame.K_DOWN]:
+            head_y += velocity
+
+        trail.insert(0, (head_x, head_y))
+
+        #collision detection with fruit
+        head_rect = font.render("o", True, WHITE).get_rect(center=(head_x, head_y))
+        fruit_rect = font.render("+", True, YELLOW).get_rect(center=(fruit_x, fruit_y))
+        if head_rect.colliderect(fruit_rect):
+            score += 1
+            snake_length += 1
+            fruit_x = random.randint(50, WIDTH-50)
+            fruit_y = random.randint(50, HEIGHT-50)
+
+   
+        snake = []
+        dist = 0
+        for i in range(len(trail) - 1):
+            if len(snake) >= snake_length:
+                break
+            x1, y1 = trail[i]
+            x2, y2 = trail[i + 1]
+            segment_dist = ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5
+            dist += segment_dist
+            if dist >= spacing:
+                snake.append((x1, y1))
+                dist = 0
+
+       
+        for segment in snake:
+            text_segment = font.render("o", True, WHITE)
+            rect_segment = text_segment.get_rect(center=(segment[0], segment[1]))
+            screen.blit(text_segment, rect_segment)
 
         text_fruit = font.render("+", True, YELLOW)
         rect_fruit = text_fruit.get_rect(center=(fruit_x,fruit_y))
         screen.blit(text_fruit, rect_fruit)
-
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            player_x -= velocity            
-        if keys[pygame.K_RIGHT]:
-            player_x += velocity
-        if keys[pygame.K_UP]:
-            player_y -= velocity
-        if keys[pygame.K_DOWN]:
-            player_y += velocity
-
-        #collision detection
-        if rect_player.colliderect(rect_fruit):
-            score +=1
-            if score % 10 == 0:
-                velocity += 0.05
-            fruit_x = random.randint(50, WIDTH-10)
-            fruit_y = random.randint(50, HEIGHT-10)
 
         
         text_back = font.render("x", True, WHITE)
@@ -92,14 +113,11 @@ while running:
             sys.exit()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = event.pos
             if status == "menu":
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = event.pos
-                    if rect_new_game.collidepoint(event.pos):
-                        status = "playing"                    
-                    elif rect_exit.collidepoint(event.pos):
-                        running = False 
+                if rect_new_game.collidepoint(event.pos):
+                    status = "playing"                    
+                elif rect_exit.collidepoint(event.pos):
+                    running = False 
 
             elif status == "playing":
                 if rect_back.collidepoint(event.pos):
@@ -108,6 +126,4 @@ while running:
 #https://github.com/tianreformis/2025-2026-XI-SEM-II-INFORMATIKA
             
             
-
-
     pygame.display.flip()
