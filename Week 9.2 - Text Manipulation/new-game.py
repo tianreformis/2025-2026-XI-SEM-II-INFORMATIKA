@@ -71,6 +71,14 @@ while running:
         if keys[pygame.K_DOWN]:
             player_y += velocity
 
+        #collision detection
+        if rect_player.colliderect(rect_fruit):
+            score +=1
+            if score % 10 == 0:
+                velocity += 0.05
+            fruit_x = random.randint(50, WIDTH-10)
+            fruit_y = random.randint(50, HEIGHT-10)
+
         
         text_back = font.render("x", True, WHITE)
         rect_back = text_back.get_rect(center=(30,50))
@@ -98,7 +106,7 @@ while running:
                     status = "menu"
 
 #https://github.com/tianreformis/2025-2026-XI-SEM-II-INFORMATIKA
-           
+            
             
 
 
