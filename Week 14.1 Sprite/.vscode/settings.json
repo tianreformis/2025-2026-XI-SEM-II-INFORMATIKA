@@ -1,0 +1,7 @@
+{
+    "terminal.integrated.fontSize":44,
+    "editor.fontSize": 52,
+    "editor.fontWeight": "bold",
+    "workbench.iconTheme": "vscode-icons",
+    "workbench.colorTheme": "Default High Contrast Light",
+}
