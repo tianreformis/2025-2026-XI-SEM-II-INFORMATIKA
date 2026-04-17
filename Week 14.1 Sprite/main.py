@@ -18,23 +18,20 @@ maze = [
     [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-
 ]
 
-# 3. Load Image
-try:
-    # Menggunakan gambar yang sama seperti kodemu
+
+try:  
     original_image = pygame.image.load('player.png')
-    # Sesuaikan ukuran player agar sedikit lebih kecil dari TILE_SIZE
+    TILE_SIZE
     player_image = pygame.transform.scale(original_image, (32, 32))
-except pygame.error:
-    # Jika file tidak ada, buat surface kotak merah sebagai pengganti
+except pygame.error:    
     player_image = pygame.Surface((32, 32))
     player_image.fill((255, 0, 0))
 
-# 4. Variabel Player
+
 player_rect = player_image.get_rect(topleft=(50, 50))
-player_speed = 5 # Speed dinaikkan karena sekarang menggunakan integer per frame
+player_speed = 5 
 facing_right = True
 
 def can_move(rect):
